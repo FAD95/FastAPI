@@ -1,1 +1,1 @@
-# My first FastAPI <img src="https://cdn.worldvectorlogo.com/logos/fastapi.svg" alt="drawing" width="200"/>
+<h1> My first FastAPI <img src="https://cdn.worldvectorlogo.com/logos/fastapi.svg" alt="drawing" width="auto"/></h1>

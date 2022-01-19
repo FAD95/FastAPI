@@ -17,7 +17,11 @@ def home():
 
 # Request and Response Body
 
-@app.post("/person/new")
+@app.post(
+    "/person/new",
+    response_model=Person,
+    response_model_exclude = {"password"}
+)
 def create_person(person: Person = Body(...)):
     return person.dict()
 

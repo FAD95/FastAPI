@@ -40,6 +40,12 @@ class Person(BaseModel):
         title="Is Married",
         default=False
     )
+    password: str = Field(
+        ..., 
+        title="Password",
+        min_length=8, 
+        max_length=100
+    )
 
     class Config:
         schema_extra = {
@@ -49,6 +55,7 @@ class Person(BaseModel):
                 "age": 26,
                 "phone": "555-555-5555",
                 "hair_color": "brown",
-                "is_married": False
+                "is_married": False,
+                "password": "password"
             }
         }

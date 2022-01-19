@@ -58,15 +58,65 @@ class Person(BaseModel):
         default=False
     )
 
+    class Config:
+        schema_extra = {
+            "example": {
+                "first_name": "Fadith",
+                "last_name": "Escorcia",
+                "age": 26,
+                "phone": "555-555-5555",
+                "hair_color": "brown",
+                "is_married": False
+            }
+        }
+
 
 ## Location
 class Location(BaseModel):
-    city: str
-    state: str
-    country: str
-    address: Optional[str] = None
-    lat: Optional[float] = None
-    lon: Optional[float] = None
+    city: str = Field(
+        ...,
+        title="City",
+        min_length=2,
+        max_length=50
+    )
+    state: str = Field(
+        ...,
+        title="State",
+        min_length=2,
+        max_length=50
+    )
+    country: str = Field(
+        ...,
+        title="Country",
+        min_length=2,
+        max_length=50
+    )
+    address: Optional[str] = Field(
+        title="Address",
+        default=None,
+        min_length=7,
+        max_length=100
+    )
+    lat: Optional[float] = Field(
+        title="Latitude",
+        default=None
+    )
+    lon: Optional[float] = Field(
+        title="Longitude",
+        default=None
+    )
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "city": "Bogotá",
+                "state": "Bogotá",
+                "country": "Colombia",
+                "address": "Rua dos Bobos, 123",
+                "lat": -23.5,
+                "lon": -46.6
+            }
+        }
 
 
 

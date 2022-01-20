@@ -3,7 +3,7 @@ from typing import Optional
 from enum import Enum
 
 # FastAPI
-from fastapi import FastAPI
+from fastapi import FastAPI, status
 from fastapi import Body, Query, Path
 
 # Models
@@ -11,15 +11,19 @@ from app.Models import Person, Location
 
 app = FastAPI()
 
-@app.get("/")
+@app.get(
+    path = "/",
+    status_code = status.HTTP_200_OK
+)
 def home():
     return {"message": "Hello World"}
 
 # Request and Response Body
 
 @app.post(
-    "/person/new",
-    response_model=Person,
+    path = "/person/new",
+    status_code = status.HTTP_201_CREATED,
+    response_model = Person,
     response_model_exclude = {"password"}
 )
 def create_person(person: Person = Body(...)):
@@ -28,7 +32,10 @@ def create_person(person: Person = Body(...)):
 
 # Validations: Query Parameters
 
-@app.get("/person/detail")
+@app.get(
+    path = "/person/detail",
+    status_code = status.HTTP_200_OK
+)
 def show_person(
     name: Optional[str] = Query(
         None, 
@@ -52,7 +59,10 @@ def show_person(
 
 # Validations: Path Parameters
 
-@app.get("/person/detail/{person_id}")
+@app.get(
+    path = "/person/detail/{person_id}",
+    status_code = status.HTTP_200_OK
+)
 def show_person(
     person_id: int = Path(
         ..., 
@@ -66,7 +76,10 @@ def show_person(
 
 # Validations: Body Parameters
 
-@app.put("/person/update/{person_id}")
+@app.put(
+    path = "/person/update/{person_id}",
+    status_code = status.HTTP_202_ACCEPTED
+)
 def update_person(
     person_id: int = Path(
         ..., 
@@ -89,4 +102,4 @@ def update_person(
     # To create only one object, use the following syntax:
     result = person.dict()
     result.update(location.dict())
-    return result
+    return {person_id: result}

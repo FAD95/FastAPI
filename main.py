@@ -1,13 +1,15 @@
 # Python 
 from typing import Optional
-from enum import Enum
+
+# Pydantic
+from pydantic import EmailStr 
 
 # FastAPI
 from fastapi import FastAPI, status
-from fastapi import Body, Query, Path
+from fastapi import Body, Query, Path, Form, Header, Cookie
 
 # Models
-from app.Models import Person, Location
+from app.Models import Person, Location, LoginOut
 
 app = FastAPI()
 
@@ -103,3 +105,57 @@ def update_person(
     result = person.dict()
     result.update(location.dict())
     return {person_id: result}
+
+# Form Parameters
+
+@app.post(
+    path = "/login",
+    status_code = status.HTTP_200_OK,
+    response_model = LoginOut,
+)
+def login(
+    username: str = Form(...),
+    password: str = Form(...)
+    ):
+    return LoginOut(username=username)
+
+@app.post(
+    path = "/contact",
+    status_code = status.HTTP_200_OK
+)
+def contact(
+    first_name: str = Form(
+        ...,
+        title="First Name",
+        description="This is the first name. It must be a string and is required.",
+        min_length=3,
+        max_length=50
+    ),
+    last_name: str = Form(
+        ...,
+        title="Last Name",
+        description="This is the last name. It must be a string and is required.",
+        min_length=3,
+        max_length=50
+    ),
+    email: EmailStr = Form(...,
+        title="Email",
+        description="This is the email. It must be a string and is required.",
+    ),
+    message: str = Form(...,
+        title="Message",
+        description="This is the message. It must be a string and is required.",
+        min_length=20,
+        max_length=500
+    ),
+    user_agent: Optional[str] = Header(default=None),
+    ads: Optional[str] = Cookie(default=None)
+    ):
+    return {
+        "first_name": first_name,
+        "last_name": last_name,
+        "email": email,
+        "message": message,
+        "user_agent": user_agent,
+        "ads": ads
+    }

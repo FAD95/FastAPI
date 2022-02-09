@@ -6,7 +6,7 @@ from pydantic import EmailStr
 
 # FastAPI
 from fastapi import FastAPI, status
-from fastapi import Body, Query, Path, Form, Header, Cookie
+from fastapi import Body, Query, Path, Form, Header, Cookie, File, UploadFile
 
 # Models
 from app.Models import Person, Location, LoginOut
@@ -15,7 +15,8 @@ app = FastAPI()
 
 @app.get(
     path = "/",
-    status_code = status.HTTP_200_OK
+    status_code = status.HTTP_200_OK,
+    tags=["Home"]
 )
 def home():
     return {"message": "Hello World"}
@@ -26,7 +27,8 @@ def home():
     path = "/person/new",
     status_code = status.HTTP_201_CREATED,
     response_model = Person,
-    response_model_exclude = {"password"}
+    response_model_exclude = {"password"},
+    tags = ["Person"]
 )
 def create_person(person: Person = Body(...)):
     return person.dict()
@@ -36,7 +38,8 @@ def create_person(person: Person = Body(...)):
 
 @app.get(
     path = "/person/detail",
-    status_code = status.HTTP_200_OK
+    status_code = status.HTTP_200_OK,
+    tags = ["Person"]
 )
 def show_person(
     name: Optional[str] = Query(
@@ -63,7 +66,9 @@ def show_person(
 
 @app.get(
     path = "/person/detail/{person_id}",
-    status_code = status.HTTP_200_OK
+    status_code = status.HTTP_200_OK,
+    tags = ["Person"],
+    deprecated=True
 )
 def show_person(
     person_id: int = Path(
@@ -80,7 +85,8 @@ def show_person(
 
 @app.put(
     path = "/person/update/{person_id}",
-    status_code = status.HTTP_202_ACCEPTED
+    status_code = status.HTTP_202_ACCEPTED,
+    tags = ["Person"]
 )
 def update_person(
     person_id: int = Path(
@@ -112,6 +118,7 @@ def update_person(
     path = "/login",
     status_code = status.HTTP_200_OK,
     response_model = LoginOut,
+    tags = ["Login", "Person"]
 )
 def login(
     username: str = Form(...),
@@ -121,7 +128,8 @@ def login(
 
 @app.post(
     path = "/contact",
-    status_code = status.HTTP_200_OK
+    status_code = status.HTTP_200_OK,
+    tags = ["Contact"]
 )
 def contact(
     first_name: str = Form(
@@ -158,4 +166,25 @@ def contact(
         "message": message,
         "user_agent": user_agent,
         "ads": ads
+    }
+
+
+# Files
+
+@app.post(
+    path = "/upload/image",
+    status_code = status.HTTP_200_OK,
+    tags = ["Files"]
+)
+def upload_image(
+    image: UploadFile = File(...,
+        title="Image",
+        description="This is the image. It must be a file and is required.",
+        max_size=1024*1024*2,
+        )
+    ):
+    return {
+        "Filename": image.filename,
+        "Format": image.content_type,
+        "Size(kb)": round(len(image.file.read())/1024, 2)
     }
